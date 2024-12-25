@@ -20,13 +20,6 @@ jobs:
         with:
           ref: main
           
-      - name: Create branch with Ticket number
-        run: |
-         ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
-         ISSUE_TITLE="${{ steps.issue-parser.outputs.issueparser_branch}}"
-         BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | sed 's/ /-/g')"
-         git checkout -b "${BRANCH_NAME}"
-         git push origin "${BRANCH_NAME}"
 
       - name: Issue Parser
         uses: stefanbuck/github-issue-praser@v3
