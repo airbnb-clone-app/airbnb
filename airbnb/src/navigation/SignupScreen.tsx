@@ -1,5 +1,13 @@
 import { useCallback, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -10,6 +18,10 @@ import { colors } from "../styles/Global";
 import HorizontalLine from "../components/common/HorizontalLine";
 import LoginButton from "../components/signup/LoginButton";
 import ArrowIcon from "react-native-vector-icons/AntDesign";
+import NationBottomSheet from "../components/signup/NationBottomSheet";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../modules/redux/nationStore";
+import { setIsNationMouse } from "../modules/redux/slice/nationSlice";
 //로그인 버튼 배열
 const loginAsset = [
   { key: "email", name: "이메일" },
@@ -18,6 +30,7 @@ const loginAsset = [
 ];
 export default function SignupScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const dispatch = useDispatch();
 
   const handleSheetChanges = useCallback((idx: number) => {
     console.log("handleSheetChanges", idx);
@@ -29,18 +42,25 @@ export default function SignupScreen() {
 
   /*마우스 클릭*/
   //국가/지역
-  const [nationMouse, setNationMouse] = useState(false);
+  const isNationMouse = useSelector(
+    (state: RootState) => state.nation.isNationMouse
+  );
+  //국가 이름
+  const isNationName = useSelector(
+    (state: RootState) => state.nation.selectedNation
+  );
   //전화번호
   const [phoneNumber, setPhoneNumber] = useState(false);
   const handleNationInput = () => {
-    setNationMouse(true);
+    dispatch(setIsNationMouse(true));
     setPhoneNumber(false);
   };
   const handlePhoneNumberInput = () => {
-    setNationMouse(false);
+    dispatch(setIsNationMouse(false));
     setPhoneNumber(true);
   };
 
+  //국가/지역 바텀시트 열기
   return (
     <GestureHandlerRootView>
       <BottomSheet
@@ -50,76 +70,105 @@ export default function SignupScreen() {
         style={{ flex: 1, shadowOpacity: 0.3 }}
       >
         <BottomSheetView style={{ flex: 1 }}>
-          <View style={styles.topContainer}>
-            <Pressable style={styles.closeButton} onPress={closeBottomSheet}>
-              <Text style={{ fontSize: 30 }}>&times;</Text>
-            </Pressable>
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={styles.topText}>로그인 또는 회원가입</Text>
-            </View>
-          </View>
-          <HorizontalLine text="" />
-
-          {/* 상단 내용 */}
-          <View style={styles.middleContainer}>
-            {/* 국가/지역 선택 인풋상자 */}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
-              <Pressable
-                style={[
-                  styles.input,
-                  {
-                    borderBottomLeftRadius: 0,
-                    borderBottomRightRadius: 0,
-                    flexDirection: "row", // 가로 방향으로 배치
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  },
-                  nationMouse && {
-                    borderWidth: 2,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                  },
-                ]}
-                onPress={handleNationInput}
-              >
-                <Text style={{ color: colors.Foggy }}>국가/지역</Text>
-                <ArrowIcon name="down" size={15} />
-              </Pressable>
-              {/* 전화번호 선택 인풋상자 */}
-              <TextInput
-                keyboardType="phone-pad"
-                placeholder="전화번호"
-                placeholderTextColor={colors.Foggy}
-                style={[
-                  styles.input,
-                  { borderTopLeftRadius: 0, borderTopRightRadius: 0 },
-                  phoneNumber && {
-                    borderWidth: 2,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  },
-                ]}
-                onPress={handlePhoneNumberInput}
-              />
-            </View>
-            <Text style={{ fontSize: 12 }}>
-              전화나 문자로 전화번호를 확인하겠습니다. 일반 문자 메시지 요금 및
-              데이터 요금이 부과됩니다.
-            </Text>
-            <Pressable style={styles.continueBtn}>
-              <Text style={styles.continueText}>계속</Text>
-            </Pressable>
+              <View style={styles.topContainer}>
+                <Pressable
+                  style={styles.closeButton}
+                  onPress={closeBottomSheet}
+                >
+                  <Text style={{ fontSize: 30 }}>&times;</Text>
+                </Pressable>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={styles.topText}>
+                    {isNationMouse ? "국가/지역" : "로그인 또는 회원가입"}
+                  </Text>
+                </View>
+              </View>
+              <HorizontalLine text="" />
 
-            {/* 하단 로그인 */}
-          </View>
-          <HorizontalLine text="또는" />
-          <View style={styles.bottomContainer}>
-            <View>
-              {loginAsset.map((item, idx) => (
-                <LoginButton key={idx} text={item.name} type={item.key} />
-              ))}
+              {/* 국가/지역 선택 시 다른 페이지 전환 */}
+              {isNationMouse ? (
+                <NationBottomSheet />
+              ) : (
+                <View>
+                  <View style={styles.middleContainer}>
+                    {/* 국가/지역 선택 인풋상자 */}
+                    <View>
+                      <Pressable
+                        style={[
+                          styles.input,
+                          {
+                            borderBottomLeftRadius: 0,
+                            borderBottomRightRadius: 0,
+                            flexDirection: "row", // 가로 방향으로 배치
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          },
+                          isNationMouse && {
+                            borderWidth: 2,
+                            borderBottomLeftRadius: 10,
+                            borderBottomRightRadius: 10,
+                          },
+                        ]}
+                        onPress={handleNationInput}
+                      >
+                        <Text
+                          style={
+                            isNationName !== ""
+                              ? { color: "black", fontWeight: 600 }
+                              : { color: colors.Foggy }
+                          }
+                        >
+                          {isNationName !== "" ? isNationName : "국가/지역"}
+                        </Text>
+                        <ArrowIcon name="down" size={15} />
+                      </Pressable>
+                      {/* 전화번호 선택 인풋상자 */}
+                      <Pressable onPress={() => Keyboard.dismiss()}>
+                        <TextInput
+                          keyboardType="phone-pad"
+                          placeholder="전화번호"
+                          placeholderTextColor={colors.Foggy}
+                          style={[
+                            styles.input,
+                            { borderTopLeftRadius: 0, borderTopRightRadius: 0 },
+                            phoneNumber && {
+                              borderWidth: 2,
+                              borderTopLeftRadius: 10,
+                              borderTopRightRadius: 10,
+                            },
+                          ]}
+                          onPress={handlePhoneNumberInput}
+                        />
+                      </Pressable>
+                    </View>
+                    <Text style={{ fontSize: 12 }}>
+                      전화나 문자로 전화번호를 확인하겠습니다. 일반 문자 메시지
+                      요금 및 데이터 요금이 부과됩니다.
+                    </Text>
+                    <Pressable style={styles.continueBtn}>
+                      <Text style={styles.continueText}>계속</Text>
+                    </Pressable>
+
+                    {/* 하단 로그인 */}
+                  </View>
+                  <HorizontalLine text="또는" />
+                  <View style={styles.bottomContainer}>
+                    <View>
+                      {loginAsset.map((item, idx) => (
+                        <LoginButton
+                          key={idx}
+                          text={item.name}
+                          type={item.key}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                </View>
+              )}
             </View>
-          </View>
+          </TouchableWithoutFeedback>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>
