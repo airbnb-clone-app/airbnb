@@ -12,6 +12,7 @@ import Heart from "../assets/images/heart.svg";
 import Airbnb from "../assets/images/airbnb.svg";
 import Message from "../assets/images/message.svg";
 import Profile from "../assets/images/profile.svg";
+import LodgeList from "../lodge/lodgeList";
 
 const Tab = createBottomTabNavigator();
 //네비게이션 배열
@@ -19,7 +20,7 @@ const navArray = [
   {
     name: "검색",
     icon: Search,
-    screen: () => <View>Search Screen</View>,
+    screen: () => <LodgeList />, //검색창, 숙소 리스트
   },
   {
     name: "위시리스트",
