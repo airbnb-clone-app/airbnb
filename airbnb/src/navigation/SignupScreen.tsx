@@ -31,6 +31,8 @@ const loginAsset = [
 export default function SignupScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const dispatch = useDispatch();
+  //휴대폰 번호
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleSheetChanges = useCallback((idx: number) => {
     console.log("handleSheetChanges", idx);
@@ -49,16 +51,26 @@ export default function SignupScreen() {
   const isNationName = useSelector(
     (state: RootState) => state.nation.selectedNation
   );
-  //전화번호
-  const [phoneNumber, setPhoneNumber] = useState(false);
+  //전화번호클릭 여부
+  const [clickPhoneNumber, setClickPhoneNumber] = useState(false);
+
   const handleNationInput = () => {
     dispatch(setIsNationMouse(true));
-    setPhoneNumber(false);
+    setClickPhoneNumber(false);
   };
   const handlePhoneNumberInput = () => {
     dispatch(setIsNationMouse(false));
-    setPhoneNumber(true);
+    setClickPhoneNumber(true);
   };
+
+  //휴대폰 번호 자동 하이픈
+  function regPhoneNumber(e: string) {
+    const result = e
+      .replace(/[^0-9.]/g, "")
+      .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+      .replace(/(-{1,2})$/g, "");
+    setPhoneNumber(result);
+  }
 
   //국가/지역 바텀시트 열기
   return (
@@ -133,12 +145,15 @@ export default function SignupScreen() {
                           style={[
                             styles.input,
                             { borderTopLeftRadius: 0, borderTopRightRadius: 0 },
-                            phoneNumber && {
+                            clickPhoneNumber && {
                               borderWidth: 2,
                               borderTopLeftRadius: 10,
                               borderTopRightRadius: 10,
                             },
                           ]}
+                          maxLength={13}
+                          value={phoneNumber}
+                          onChangeText={regPhoneNumber}
                           onPress={handlePhoneNumberInput}
                         />
                       </Pressable>
