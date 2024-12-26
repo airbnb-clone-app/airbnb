@@ -19,4 +19,5 @@ export const colors = {
   Arches: "#FC642D",
   Hof: "#484848",
   Foggy: "#767676",
+  LightGray:"#dee2e6"
 };
