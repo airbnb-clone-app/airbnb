@@ -8,10 +8,9 @@ export const itemsStyle = StyleSheet.create({
     borderRadius: 15,
   },
   addrContainer: {
-    flexDirection: "row",
-    width: "99.9%",
-    backgroundColor: "red",
     justifyContent: "space-between",
+    flexDirection: "row",
+    // backgroundColor: "green",
   },
   addr: {
     fontSize: 17,
@@ -20,10 +19,33 @@ export const itemsStyle = StyleSheet.create({
   bodyContainer: {
     marginLeft: 3,
     marginTop: 12,
+    marginBottom: 50,
+    flex: 1,
   },
   review: {
-    width: "99.9%",
     flexDirection: "row",
-    // backgroundColor: "blue",
+  },
+  star: {
+    fontSize: 17,
+    fontWeight: "500",
+    // backgroundColor: "orange",
+  },
+  title: {
+    fontSize: 16,
+    color: colors.Foggy,
+  },
+  price: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "black",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    marginTop: 3,
+  },
+  price2: {
+    fontSize: 17,
+    color: "black",
+    marginLeft: 1,
   },
 });

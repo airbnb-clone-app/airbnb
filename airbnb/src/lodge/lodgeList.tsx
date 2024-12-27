@@ -95,7 +95,7 @@ export default function LodgeList() {
     console.log("데이터 가져오는 중...");
     try {
       const response = await fetch(
-        `https://apis.data.go.kr/B551011/KorService1/searchStay1?MobileOS=AND&MobileApp=airbnb&serviceKey=${API_KEY}&_type=json&numOfRows=100`
+        `https://apis.data.go.kr/B551011/KorService1/searchStay1?MobileOS=AND&MobileApp=airbnb&serviceKey=${API_KEY}&_type=json&numOfRows=500`
       );
 
       if (!response.ok) {
