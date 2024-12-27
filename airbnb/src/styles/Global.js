@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+export const { width: SCREEN_WIDTH } = Dimensions.get("window");
+export const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export const globalStyles = StyleSheet.create({
   container: {
@@ -8,8 +11,8 @@ export const globalStyles = StyleSheet.create({
   iconWrapper: {
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2, 
-    borderRadius: 9999, 
+    borderWidth: 2,
+    borderRadius: 9999,
   },
 });
 

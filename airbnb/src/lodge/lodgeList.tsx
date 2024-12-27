@@ -4,14 +4,14 @@ import {
   ActivityIndicator,
   Animated,
   PanResponder,
-  FlatList,
   Dimensions,
-  ScrollView,
+  FlatList,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { listStyle } from "../styles/LodgeList.js";
 import RenderList from "./renderLodge.tsx";
 import { colors } from "../styles/Global";
+
 // API 키
 const API_KEY =
   "W%2BT4hsezl9G4EbOmMo%2BMCYNdA0eCp2kKYi7Uw03zJXVo%2FMULg1GksVtNFW3cG5YHaKhdkGxy25BOhFkasmcAgw%3D%3D";
@@ -29,6 +29,7 @@ const location = [
   { name: "한옥" },
 ];
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 // 위치 항목 렌더링 컴포넌트
 const RenderLocation = ({ name }: { name: string }) => (
   <View>
@@ -40,10 +41,11 @@ export default function LodgeList() {
   // 숙소 데이터 상태
   const [lodges, setLodges] = useState<any[]>([]);
   const [ok, setOk] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const [height, setHeight] = useState(1);
 
   const translateY = useRef(new Animated.Value(0)).current;
 
-  // 드래그 가능한 뷰가 멈출 높이
   const BOTTOM_LIMIT = SCREEN_HEIGHT * 0.75;
 
   const panResponder = PanResponder.create({
@@ -52,22 +54,36 @@ export default function LodgeList() {
     },
 
     onPanResponderMove: (_, gestureState) => {
-      if (gestureState.dy >= 0) {
+      if (!drag && gestureState.dy >= 0) {
+        // 드래그 아래로
         translateY.setValue(gestureState.dy);
+      } else if (drag && gestureState.dy <= 0) {
+        // 드래그 위로
+        translateY.setValue(BOTTOM_LIMIT + gestureState.dy);
       }
     },
-    // 드래그를 놓았을 때 처리
+
     onPanResponderRelease: (_, gestureState) => {
-      if (gestureState.dy > BOTTOM_LIMIT / 2) {
-        // 하단으로 스냅
+      if (gestureState.dy > BOTTOM_LIMIT / 4) {
+        // 아래로 스냅
         Animated.spring(translateY, {
           toValue: BOTTOM_LIMIT,
           useNativeDriver: true,
         }).start();
-      } else {
-        // 원래 위치로 스냅
+        setDrag(true);
+        setHeight(0);
+      } else if (gestureState.dy < -BOTTOM_LIMIT / 4) {
+        // 위로 스냅
         Animated.spring(translateY, {
           toValue: 0,
+          useNativeDriver: true,
+        }).start();
+        setDrag(false);
+        setHeight(0.1);
+      } else {
+        const targetValue = drag ? BOTTOM_LIMIT : 0;
+        Animated.spring(translateY, {
+          toValue: targetValue,
           useNativeDriver: true,
         }).start();
       }
@@ -86,7 +102,13 @@ export default function LodgeList() {
         throw new Error("네트워크 응답이 올바르지 않습니다");
       }
       const json = await response.json();
-      setLodges(json.response.body.items.item);
+
+      // 숙소 랜덤으로
+      const randomLodges = json.response.body.items.item.sort(
+        () => Math.random() - 0.5
+      );
+
+      setLodges(randomLodges);
       setOk(true);
     } catch (error) {
       console.error("데이터 가져오는 중 오류 발생:", error);
@@ -109,78 +131,83 @@ export default function LodgeList() {
           />
         </View>
 
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={[listStyle.listContainer, { transform: [{ translateY }] }]}
-        >
-          <ScrollView>
-            <View style={listStyle.gap}>
-              <View
-                style={{
-                  backgroundColor: colors.Foggy,
-                  height: 4,
-                  width: 50,
-                  opacity: 0.7,
-                  marginTop: 10,
-                  borderRadius: 20,
-                }}
-              ></View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 16,
-                  fontWeight: "500",
-                  marginTop: 20,
-                }}
-              >
-                해변 바로 앞 숙소 1,000개 이상
-              </Text>
-            </View>
-            <View style={listStyle.bottomLine}></View>
-            <View style={listStyle.informationContainer}>
-              <View style={listStyle.information}>
-                <Text
-                  style={{ marginLeft: 20, color: colors.Foggy, fontSize: 14 }}
-                >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      textDecorationLine: "underline",
-                    }}
-                  >
-                    회사 상세정보
-                  </Text>
-                  <Text> 및 </Text>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      textDecorationLine: "underline",
-                    }}
-                  >
-                    이용 약관
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            {ok ? (
-              <FlatList
-                data={lodges}
-                renderItem={({ item }) => (
-                  <RenderList
-                    addr1={item.addr1}
-                    title={item.title}
-                    firstimage={item.firstimage}
-                  />
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            ) : (
+        {ok ? (
+          <Animated.FlatList
+            {...panResponder.panHandlers}
+            style={[listStyle.listContainer, { transform: [{ translateY }] }]}
+            scrollEnabled={height !== 0}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
               <View>
-                <ActivityIndicator size="large" color="black" />
+                <View style={listStyle.gap}>
+                  <View
+                    style={{
+                      backgroundColor: colors.Foggy,
+                      height: 4,
+                      width: 50,
+                      opacity: 0.7,
+                      marginTop: 10,
+                      borderRadius: 20,
+                    }}
+                  ></View>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 16,
+                      fontWeight: "500",
+                      marginTop: 20,
+                    }}
+                  >
+                    해변 바로 앞 숙소 1,000개 이상
+                  </Text>
+                </View>
+                <View style={listStyle.bottomLine}></View>
+                <View style={listStyle.informationContainer}>
+                  <View style={listStyle.information}>
+                    <Text
+                      style={{
+                        marginLeft: 20,
+                        color: colors.Foggy,
+                        fontSize: 14,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          textDecorationLine: "underline",
+                        }}
+                      >
+                        회사 상세정보
+                      </Text>
+                      <Text> 및 </Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          textDecorationLine: "underline",
+                        }}
+                      >
+                        이용 약관
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
               </View>
+            }
+            data={lodges}
+            renderItem={({ item }) => (
+              <RenderList
+                addr1={item.addr1}
+                title={item.title}
+                firstimage={item.firstimage || ""}
+              />
             )}
-          </ScrollView>
-        </Animated.View>
+            keyExtractor={(item) => item.id || item.title}
+          />
+        ) : (
+          <View>
+            <ActivityIndicator size="large" color="black" />
+          </View>
+        )}
       </View>
     </View>
   );

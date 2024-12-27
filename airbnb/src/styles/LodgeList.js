@@ -1,9 +1,9 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-import { colors } from "./Global";
+import { colors, SCREEN_WIDTH, SCREEN_HEIGHT } from "./Global";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+// const { width: SCREEN_WIDTH } = Dimensions.get("window");
+// const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 export const listStyle = StyleSheet.create({
   container: {
     flex: 1,
@@ -27,11 +27,7 @@ export const listStyle = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-  image: {
-    width: SCREEN_WIDTH * 0.9,
-    height: SCREEN_WIDTH * 0.9,
-    borderRadius: 15,
-  },
+
   item: {
     alignContent: "center",
   },
@@ -49,12 +45,12 @@ export const listStyle = StyleSheet.create({
     opacity: 0.3,
   },
   informationContainer: {
-    height: SCREEN_HEIGHT * 0.15,
+    height: SCREEN_HEIGHT * 0.14,
     // backgroundColor: "green",
     justifyContent: "center",
   },
   information: {
-    height: SCREEN_HEIGHT * 0.07,
+    height: SCREEN_HEIGHT * 0.06,
     borderRadius: 15,
     // backgroundColor: "red",
     flexDirection: "row",
