@@ -6,11 +6,12 @@ import {
   PanResponder,
   FlatList,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { listStyle } from "../styles/LodgeList.js";
 import RenderList from "./renderLodge.tsx";
-
+import { colors } from "../styles/Global";
 // API 키
 const API_KEY =
   "W%2BT4hsezl9G4EbOmMo%2BMCYNdA0eCp2kKYi7Uw03zJXVo%2FMULg1GksVtNFW3cG5YHaKhdkGxy25BOhFkasmcAgw%3D%3D";
@@ -100,7 +101,6 @@ export default function LodgeList() {
     <View style={listStyle.container}>
       <View style={listStyle.background}>
         <View style={listStyle.top}>
-          <Text>검색창</Text>
           <FlatList
             data={location}
             renderItem={({ item }) => <RenderLocation name={item.name} />}
@@ -113,24 +113,73 @@ export default function LodgeList() {
           {...panResponder.panHandlers}
           style={[listStyle.listContainer, { transform: [{ translateY }] }]}
         >
-          <View style={listStyle.gap}></View>
-          {ok ? (
-            <FlatList
-              data={lodges}
-              renderItem={({ item }) => (
-                <RenderList
-                  addr1={item.addr1}
-                  title={item.title}
-                  firstimage={item.firstimage}
-                />
-              )}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          ) : (
-            <View>
-              <ActivityIndicator size="large" color="black" />
+          <ScrollView>
+            <View style={listStyle.gap}>
+              <View
+                style={{
+                  backgroundColor: colors.Foggy,
+                  height: 4,
+                  width: 50,
+                  opacity: 0.7,
+                  marginTop: 10,
+                  borderRadius: 20,
+                }}
+              ></View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 16,
+                  fontWeight: "500",
+                  marginTop: 20,
+                }}
+              >
+                해변 바로 앞 숙소 1,000개 이상
+              </Text>
             </View>
-          )}
+            <View style={listStyle.bottomLine}></View>
+            <View style={listStyle.informationContainer}>
+              <View style={listStyle.information}>
+                <Text
+                  style={{ marginLeft: 20, color: colors.Foggy, fontSize: 14 }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    회사 상세정보
+                  </Text>
+                  <Text> 및 </Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    이용 약관
+                  </Text>
+                </Text>
+              </View>
+            </View>
+            {ok ? (
+              <FlatList
+                data={lodges}
+                renderItem={({ item }) => (
+                  <RenderList
+                    addr1={item.addr1}
+                    title={item.title}
+                    firstimage={item.firstimage}
+                  />
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            ) : (
+              <View>
+                <ActivityIndicator size="large" color="black" />
+              </View>
+            )}
+          </ScrollView>
         </Animated.View>
       </View>
     </View>
