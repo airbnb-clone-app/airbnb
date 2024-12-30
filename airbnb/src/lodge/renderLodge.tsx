@@ -10,10 +10,16 @@ type listProps = {
   title?: string;
   firstimage?: string;
   firstimage2?: string;
+  price?: number;
 };
 
 //List render하는 컴포넌트
-export default function RenderList({ addr1, title, firstimage }: listProps) {
+export default function RenderList({
+  addr1,
+  title,
+  firstimage,
+  price,
+}: listProps) {
   addr1 === ""
     ? "주소 정보가 없습니다."
     : (addr1 = addr1?.split(" ").slice(0, 2).join(" "));
@@ -48,7 +54,7 @@ export default function RenderList({ addr1, title, firstimage }: listProps) {
         </View>
         <Text style={itemsStyle.title}>{title}</Text>
         <View style={itemsStyle.priceContainer}>
-          <Text style={itemsStyle.price}>₩159,851</Text>
+          <Text style={itemsStyle.price}>₩{price}</Text>
           <Text style={itemsStyle.price2}> /박</Text>
         </View>
       </View>

@@ -90,28 +90,48 @@ export default function LodgeList() {
     },
   });
 
-  // 숙소 데이터 가져오기
+  type Lodge = {
+    contentid: string;
+    title: string;
+    addr1: string;
+    firstimage: string;
+    // 필요한 다른 속성들을 여기에 추가
+  };
+
+  const getRandomPrice = (id: string | number) => {
+    const min = 50000; // 최소 가격: 5만원
+    const max = 200000; // 최대 가격: 20만원
+    const hash = Array.from(id.toString()).reduce(
+      (acc, char) => acc + char.charCodeAt(0),
+      0
+    );
+
+    const randomFactor = Math.random() * (max - min); // 0부터 (max-min) 사이의 값
+    const calculatedPrice = ((hash + randomFactor) % (max - min + 1)) + min; // 고유 ID 기반으로 범위 내에서 랜덤 값 생성
+
+    return Math.round(calculatedPrice); // 반올림하여 가격을 정수로 반환
+  };
+
   const getLodgeList = async () => {
-    console.log("데이터 가져오는 중...");
     try {
       const response = await fetch(
         `https://apis.data.go.kr/B551011/KorService1/searchStay1?MobileOS=AND&MobileApp=airbnb&serviceKey=${API_KEY}&_type=json&numOfRows=500`
       );
+      if (!response.ok) throw new Error("네트워크 응답 오류");
 
-      if (!response.ok) {
-        throw new Error("네트워크 응답이 올바르지 않습니다");
-      }
       const json = await response.json();
 
-      // 숙소 랜덤으로
-      const randomLodges = json.response.body.items.item.sort(
-        () => Math.random() - 0.5
+      const lodgesWithPrice = json.response.body.items.item.map(
+        (lodge: Lodge) => ({
+          ...lodge,
+          price: getRandomPrice(lodge.contentid).toLocaleString("ko-KR"),
+        })
       );
 
-      setLodges(randomLodges);
+      setLodges(lodgesWithPrice.sort(() => Math.random() - 0.5));
       setOk(true);
     } catch (error) {
-      console.error("데이터 가져오는 중 오류 발생:", error);
+      console.error("데이터 가져오기 오류:", error);
     }
   };
 
@@ -199,6 +219,7 @@ export default function LodgeList() {
                 addr1={item.addr1}
                 title={item.title}
                 firstimage={item.firstimage || ""}
+                price={item.price}
               />
             )}
             keyExtractor={(item) => item.id || item.title}
