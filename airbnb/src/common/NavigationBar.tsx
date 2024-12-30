@@ -12,7 +12,7 @@ import Heart from "../assets/images/heart.svg";
 import Airbnb from "../assets/images/airbnb.svg";
 import Message from "../assets/images/message.svg";
 import Profile from "../assets/images/profile.svg";
-import LodgeList from "../lodge/lodgeList";
+import LodgeList from "../lodge/LodgeListScreen";
 
 const Tab = createBottomTabNavigator();
 //네비게이션 배열

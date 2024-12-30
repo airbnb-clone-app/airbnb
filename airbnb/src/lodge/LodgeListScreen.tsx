@@ -9,33 +9,46 @@ import {
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { listStyle } from "../styles/LodgeList.js";
-import RenderList from "./renderLodge.tsx";
-import { colors } from "../styles/Global";
+import RenderLodge from "./renderLodge.tsx";
+import { colors } from "../styles/Global.js";
+import { useNavigation } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 // API 키
 const API_KEY =
   "W%2BT4hsezl9G4EbOmMo%2BMCYNdA0eCp2kKYi7Uw03zJXVo%2FMULg1GksVtNFW3cG5YHaKhdkGxy25BOhFkasmcAgw%3D%3D";
 
-// 위치 목록 데이터
-const location = [
-  { name: "멋진 수영장" },
-  { name: "컬처 아이콘" },
-  { name: "해변 바로 앞" },
-  { name: "방" },
-  { name: "디자인" },
-  { name: "트리하우스" },
-  { name: "한적한 시골" },
-  { name: "최고의 전망" },
-  { name: "한옥" },
-];
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+// // 위치 목록 데이터
+// const location = [
+//   { name: "멋진 수영장" },
+//   { name: "컬처 아이콘" },
+//   { name: "해변 바로 앞" },
+//   { name: "방" },
+//   { name: "디자인" },
+//   { name: "트리하우스" },
+//   { name: "한적한 시골" },
+//   { name: "최고의 전망" },
+//   { name: "한옥" },
+// ];
 
-// 위치 항목 렌더링 컴포넌트
-const RenderLocation = ({ name }: { name: string }) => (
-  <View>
-    <Text>{name}</Text>
-  </View>
-);
+// // 위치 항목 렌더링 컴포넌트
+// const RenderLocation = ({ name }: { name: string }) => (
+//   <View>
+//     <Text>{name}</Text>
+//   </View>
+// );
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+//숙소 리스트 타입 지정
+type RootStackParamList = {
+  LodgeDetail: {
+    addr1?: string;
+    title?: string;
+    firstimage?: string;
+    firstimage2?: string;
+    price?: number;
+  };
+};
 
 export default function LodgeList() {
   // 숙소 데이터 상태
@@ -138,17 +151,18 @@ export default function LodgeList() {
   useEffect(() => {
     getLodgeList();
   }, []);
-
+  type NavigationProp = StackNavigationProp<RootStackParamList, "LodgeDetail">;
+  const navigation = useNavigation<NavigationProp>();
   return (
     <View style={listStyle.container}>
       <View style={listStyle.background}>
         <View style={listStyle.top}>
-          <FlatList
+          {/* <FlatList
             data={location}
             renderItem={({ item }) => <RenderLocation name={item.name} />}
             keyExtractor={(item) => item.name}
             horizontal
-          />
+          /> */}
         </View>
 
         {ok ? (
@@ -215,14 +229,22 @@ export default function LodgeList() {
             }
             data={lodges}
             renderItem={({ item }) => (
-              <RenderList
+              <RenderLodge
                 addr1={item.addr1}
                 title={item.title}
                 firstimage={item.firstimage || ""}
                 price={item.price}
+                onPress={() =>
+                  navigation.navigate("LodgeDetail", {
+                    addr1: item.addr1,
+                    title: item.title,
+                    firstimage: item.firstimage,
+                    price: item.price,
+                  })
+                }
               />
             )}
-            keyExtractor={(item) => item.id || item.title}
+            keyExtractor={(item) => item.contentid || item.title}
           />
         ) : (
           <View>

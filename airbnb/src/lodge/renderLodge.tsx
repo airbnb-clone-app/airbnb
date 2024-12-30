@@ -1,8 +1,10 @@
-import { Image, Text, View } from "react-native";
+import { Image, Text, View, Pressable } from "react-native";
 import { listStyle } from "../styles/LodgeList";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { itemsStyle } from "./../styles/LodgeItem";
+import { useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
 //숙소 리스트 타입 지정
 type listProps = {
@@ -11,20 +13,22 @@ type listProps = {
   firstimage?: string;
   firstimage2?: string;
   price?: number;
+  onPress: () => void;
 };
 
 //List render하는 컴포넌트
-export default function RenderList({
+export default function RenderLodge({
   addr1,
   title,
   firstimage,
   price,
+  onPress,
 }: listProps) {
   addr1 === ""
     ? "주소 정보가 없습니다."
     : (addr1 = addr1?.split(" ").slice(0, 2).join(" "));
   return (
-    <View>
+    <Pressable onPress={onPress}>
       {firstimage === "" ? (
         <Image
           source={require("../assets/images/default.png")}
@@ -58,6 +62,6 @@ export default function RenderList({
           <Text style={itemsStyle.price2}> /박</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
