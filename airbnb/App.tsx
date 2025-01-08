@@ -6,7 +6,15 @@ import NavigationBar from "./src/common/NavigationBar";
 import LodgeListScreen from "./src/lodge/LodgeListScreen";
 import LodgeDetailScreen from "./src/lodge/LodgeDetailScreen";
 
-const Stack = createNativeStackNavigator();
+// 네비게이션 스택 타입 정의
+type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+  Main: undefined;
+  LodgeList: undefined;
+  LodgeDetail: { firstimage: string; title: string }; // LodgeDetail에 파라미터 추가
+};
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (

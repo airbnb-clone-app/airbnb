@@ -2,7 +2,7 @@ import { Image, Text, View, Pressable } from "react-native";
 import { listStyle } from "../styles/LodgeList";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { itemsStyle } from "./../styles/LodgeItem";
+import { itemsStyle } from "../styles/LodgeItem";
 import { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 

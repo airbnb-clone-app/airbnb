@@ -12,32 +12,12 @@ import { listStyle } from "../styles/LodgeList.js";
 import RenderLodge from "./renderLodge.tsx";
 import { colors } from "../styles/Global.js";
 import { useNavigation } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 // API 키
 const API_KEY =
   "W%2BT4hsezl9G4EbOmMo%2BMCYNdA0eCp2kKYi7Uw03zJXVo%2FMULg1GksVtNFW3cG5YHaKhdkGxy25BOhFkasmcAgw%3D%3D";
 
-// // 위치 목록 데이터
-// const location = [
-//   { name: "멋진 수영장" },
-//   { name: "컬처 아이콘" },
-//   { name: "해변 바로 앞" },
-//   { name: "방" },
-//   { name: "디자인" },
-//   { name: "트리하우스" },
-//   { name: "한적한 시골" },
-//   { name: "최고의 전망" },
-//   { name: "한옥" },
-// ];
-
-// // 위치 항목 렌더링 컴포넌트
-// const RenderLocation = ({ name }: { name: string }) => (
-//   <View>
-//     <Text>{name}</Text>
-//   </View>
-// );
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 //숙소 리스트 타입 지정
 type RootStackParamList = {
@@ -50,7 +30,7 @@ type RootStackParamList = {
   };
 };
 
-export default function LodgeList() {
+export default function LodgeListScreen() {
   // 숙소 데이터 상태
   const [lodges, setLodges] = useState<any[]>([]);
   const [ok, setOk] = useState(false);
