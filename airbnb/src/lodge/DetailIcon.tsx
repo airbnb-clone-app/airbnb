@@ -22,12 +22,12 @@ export default function DetailIcon({
         position: "absolute",
         top: 40,
         left: left,
-        padding: 10,
+        padding: 8,
         backgroundColor: "white",
         borderRadius: 100, // 원형으로 설정
       }}
     >
-      <Feather name={iconName} size={16} color="black" />
+      <Feather name={iconName} size={18} color="black" />
     </TouchableOpacity>
   );
 }
